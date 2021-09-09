@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+   app:
+     build: 
+        context: .
+        dockerfile: ./src/Dockerfile
+
+     image: node-pg-app
+
+     container_name: node_app
+
+     command: sh -c "npx knex migrate:latest && node server.js"  
+       
+     env_file: .env
+
+     ports:
+        - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT  
+
+     volumes:
+       - .:/home/node/app
+       - node_modules:/home/node/app/node_modules:delegated
+     
+     links:
+        - $POSTGRES_HOST
+
+     depends_on: 
+        - postgresdb  
+
+     environment: 
+       DB_HOST: $POSTGRES_HOST
+       DB_USER: $POSTGRES_USER
+       DB_PASS: $POSTGRES_PASSWORD   
+
+     stdin_open: true
+     tty: true  
+
+   postgresdb:              
+    image: postgres 
+
+    container_name: pg_db  
+
+    restart: unless-stopped
+
+    env_file: .env
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      start_period: 10s
+      timeout: 4s
+      retries: 3    
+
+    environment:
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DB: admin
+      PGDATA: "/data/postgres"
+
+    ports:
+      - $POSTGRES_LOCAL_PORT:$POSTGRES_DOCKER_PORT
+
+    volumes: 
+      - postgres:/data/postgres
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+
+volumes:  
+  postgres: 
+  node_modules:
+
+
