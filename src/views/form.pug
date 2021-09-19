@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    form(action="." method="post")
+    label(form="name") Name: 
+    input(type="text"
+          id="name"
+          name="name"
+          )
+
+    label(form="email") Email:
+    input(type="email"
+          id="email"
+          name="email"
+          )
+    input(type="submit" value="Submit")

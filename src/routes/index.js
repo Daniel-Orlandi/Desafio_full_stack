@@ -7,7 +7,7 @@ const locationController = require('../controllers/locations_controller')
 const MedicalRecordController = require('../controllers/medical_record_controller')
 const PatientPhotosController = require('../controllers/patient_photos_controller')
 const fileController = require('../controllers/file_controller')
-
+const homeController = require('../controllers/home_controller')
 //User routes
 routes.get('/patients', PatientsController.index)
 routes.get('/patients/:id', PatientsController.show)
@@ -42,5 +42,8 @@ routes.get('/locations/:id', locationController.show)
 routes.post('/locations', locationController.store)
 routes.put('/locations/:id', locationController.update)
 routes.delete('/locations/:id', locationController.delete)
+
+//Home routes
+routes.get('/', homeController.getHome)
 
 module.exports = routes
